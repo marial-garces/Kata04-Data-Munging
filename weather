@@ -1,0 +1,39 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class WeatherAnalyzer {
+
+    public static void main(String[] args) {
+        String filePath = "weather.dat"; // Path to the weather data file
+        int minSpreadDay = findDayWithMinTemperatureSpread(filePath);
+        System.out.println("Day with the smallest temperature spread: " + minSpreadDay);
+    }
+
+    public static int findDayWithMinTemperatureSpread(String filePath) {
+        int minSpreadDay = -1;
+        double minSpread = Double.MAX_VALUE;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            br.readLine(); // Skip header line
+            while ((line = br.readLine()) != null) {
+                String[] data = line.trim().split("\\s+");
+                if (data.length >= 3) {
+                    int day = Integer.parseInt(data[0]);
+                    double maxTemp = Double.parseDouble(data[1]);
+                    double minTemp = Double.parseDouble(data[2]);
+                    double spread = maxTemp - minTemp;
+                    if (spread < minSpread) {
+                        minSpread = spread;
+                        minSpreadDay = day;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return minSpreadDay;
+    }
+}
